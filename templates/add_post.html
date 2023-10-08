@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+{% include 'header.html' %}
+ <header class="masthead" style="background-image: url(./static/assets/img/home2-bg.jpg);">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Dim's Blog</h1>
+                            <span class="subheading">Snippets of knowledge for excellence.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ </header>
+<div class="container">
+        <div class="row form-control justify-content-center card text-left mx-auto my-1 rounded w-75">
+           <form action="addpost" method="POST" class="pb-4">
+               <div>
+                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                   <label for="title" class="form-check-label mt-3"><b>Blog Post title</b></label>
+                    <input type="text" name="title" id="title" class="form-control">
+                   <label for="subtitle" class="form-check-label mt-3"><b>Subtitle</b></label>
+                    <input type="text" name="subtitle" id="subtitle" class="form-control">
+                   <label for="yourname" class="form-check-label mt-3"><b>Your Name</b></label>
+                    <input type="text" name="yourname" id="yourname" class="form-control">
+                   <label for="url" class="form-check-label mt-3"><b>Your Name</b></label>
+                    <input type="text" name="url" id="url" class="form-control">
+                    <input type="submit" name="submit" id="submit" class="form-control" value="submit">
+               </div>
+           </form>
+        </div>
+</div>
+    {% include "footer.html" %}
+
+
+</body>
+</html>
