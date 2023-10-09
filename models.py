@@ -1,5 +1,6 @@
 #from wtforms.form import Form
 from flask_login import UserMixin
+from datetime import datetime
 from wtforms.fields import StringField,EmailField,SubmitField
 from wtforms.validators import DataRequired,length
 from flask_wtf import FlaskForm, CSRFProtect
@@ -8,7 +9,6 @@ from flask_login import LoginManager
 
 login_manager = LoginManager()
 db = SQLAlchemy()
-dbp = SQLAlchemy()
 csrf = CSRFProtect()
 
 
@@ -36,10 +36,30 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(1000))
 
 
-class Post(dbp.Model):
-    id = dbp.Column(dbp.Integer, primary_key=True) # primary keys are required by SQLAlchemy
-    title = dbp.Column(dbp.String(1000), unique=True)
-    subtitle = dbp.Column(dbp.String(1000), unique=True)
-    body = dbp.Column(dbp.String(1000))
-    post_by = dbp.Column(dbp.String(1000))
-    post_date = dbp.Column(dbp.String(100))
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    title = db.Column(db.String(1000), unique=True)
+    subtitle = db.Column(db.String(1000), unique=True)
+    body = db.Column(db.String())
+    post_by = db.Column(db.String(1000))
+    post_date = db.Column(db.String(100))
+
+
+def post_day():
+    date = datetime.now()
+    year = date.strftime("%Y")
+    month = date.strftime("%B")
+    day = date.strftime("%d")
+    if len(day) == 2 and day[0] == "0":
+        day = day[1]
+    if (day[-1] == "1" and len(day) == 1) or (day[-1]=="1" and len(day)>1 and day[-2]!="1"):
+        sufx = "st"
+    elif (day[-1] == "2" and len(day) == 1) or (day[-1]=="2" and len(day)>1 and day[-2]!="1"):
+        sufx = "nd"
+    elif (day[-1] == "3" and len(day) == 1) or (day[-1]=="3" and len(day)>1 and day[-2]!="1"):
+        sufx = "rd"
+    else:
+        sufx = "th"
+    today = f"{day}{sufx} {month}, {year}"
+    #print(today)
+    return today

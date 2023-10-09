@@ -3,8 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from models import LoginForm,db,User,SignupForm,login_manager,Post,dbp,csrf
+from models import LoginForm,db,User,SignupForm,login_manager,Post,csrf,post_day
 
 
 
@@ -29,7 +28,8 @@ resp = res
 
 @app.route('/')
 def home():
-    data = resp
+    # data = resp
+    data = Post.query.all()
     return render_template("index.html", data=data)
 
 
@@ -40,34 +40,44 @@ def about():
 
 
 @app.route('/post/<i_d>')
-@login_required
-def post_page(i_d):
+#@login_required
+def view_post(i_d):
     view_data = {}
-    #print(view_data)
-    data = resp
-    for each_post in data:
-        if each_post["id"] == int(i_d):
-            view_data["title"] = each_post["title"]
-            view_data["subtitle"] = each_post["subtitle"]
-            view_data["body"] = each_post["body"]
-            view_data["post_by"] = each_post["post_by"]
-            view_data["post_date"] = each_post["post_date"]
+    data = Post.query.get(int(i_d))
+    print(data.id)
+    print(data.title)
+    #Read Data from SQLlite DB
+    if data.id == int(i_d):
+        view_data["title"] = data.title
+        view_data["subtitle"] = data.subtitle
+        view_data["body"] = data.body
+        view_data["post_by"] = data.post_by
+        view_data["post_date"] = data.post_date
+    # Read Data from npoint API
+    #data = resp
+    # for each_post in data:
+    #     if each_post["id"] == int(i_d):
+    #         view_data["title"] = each_post["title"]
+    #         view_data["subtitle"] = each_post["subtitle"]
+    #         view_data["body"] = each_post["body"]
+    #         view_data["post_by"] = each_post["post_by"]
+    #         view_data["post_date"] = each_post["post_date"]
     return render_template("post.html", contxt=view_data)
 
 
 @app.route("/addpost", methods = ["POST","GET"])
 #@login_required
 def add_post():
+    db.create_all()
     if request.method == "POST":
-        title = ""#each_post["title"]
-        subtitle = ""#each_post["subtitle"]
-        body = ""#each_post["body"]
-        post_by = ""#each_post["post_by"]
-        post_date = ""#each_post["post_date"]
-        dbp.create_all()
+        title = request.form["title"]
+        subtitle = request.form["subtitle"]
+        body = request.form["content"]
+        post_by = request.form["author"]
+        post_date = post_day() # request.form["post_date"]
         new_post = Post(title=title, subtitle=subtitle, body=body, post_by=post_by, post_date=post_date)
-        dbp.session.add(new_post)
-        dbp.session.commit()
+        db.session.add(new_post)
+        db.session.commit()
         return redirect(url_for("home"))
     return render_template("add_post.html")
 
@@ -76,7 +86,7 @@ def add_post():
 
 @login_manager.user_loader
 def load_user(user_id):
-    # since the user_id is just the primary key of our user table, use it in the query for the user
+    # since the user_id is just the primary key of our user table, use this in the query for the user
     return User.query.get(int(user_id))
 
 

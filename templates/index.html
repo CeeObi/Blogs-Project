@@ -26,7 +26,7 @@
                 <!-- Post preview-->
                 {% for each_post in data: %}
                 <div class="post-preview">
-                    <a href="{{url_for('post_page',i_d=each_post.id)}}">
+                    <a href="{{url_for('view_post',i_d=each_post.id)}}">
                         <h2 class="post-title">{{each_post.title}}</h2>
                         <h3 class="post-subtitle">{{each_post.subtitle}}</h3>
                     </a>
@@ -41,7 +41,11 @@
                 {% endfor %}
 
                 <!-- Pager-->
+                {% if current_user.is_authenticated %}
+                <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href={{url_for('add_post')}}>Create New Post →</a></div>
+                {% else %}
                 <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+                {% endif %}
             </div>
         </div>
     </div>
