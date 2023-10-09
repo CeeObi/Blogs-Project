@@ -38,11 +38,13 @@ class User(UserMixin, db.Model):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    post_owner_email = db.Column(db.String(1000))
     title = db.Column(db.String(1000), unique=True)
     subtitle = db.Column(db.String(1000), unique=True)
     body = db.Column(db.String())
     post_by = db.Column(db.String(1000))
     post_date = db.Column(db.String(100))
+    post_img_url = db.Column(db.String())
 
 
 def post_day():

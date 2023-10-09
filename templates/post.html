@@ -4,7 +4,7 @@
     <body>
        {% include 'header.html' %}
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url({{url_for('static', filename='assets/img/post2-bg.jpg')}})">
+        <header class="masthead" style="background-image: url({{contxt.post_img_url}})">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
@@ -31,10 +31,16 @@
                             <a href="http://spaceipsum.com/">Space Ipsum</a>
                             &middot; Images by
                             <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>
-                        </p>
+                        {% if current_user.is_authenticated %}
+                         {% if contxt.validated_user %}
+                        <hr class="my-4" />
+                        <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href={{url_for('edit_post',i_d=contxt.id)}}>Edit Post →</a></div>
+                        {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            <hr class="my-4" />
         </article>
         <!-- Footer-->
         {% include "footer.html" %}
