@@ -34,7 +34,13 @@
                         Posted by
                         <a href="#!">{{each_post.post_by}}</a>
                         on {{each_post.post_date}}.
+                        {% if current_user.is_authenticated %}
+                        {% if current_user.email == each_post.post_owner_email %}
+                        <a href="{{url_for('delete_post',i_d=each_post.id)}}"><i class="fa-solid fa-circle-xmark mx-2"></i></a>
+                        {% endif %}
+                        {% endif %}
                     </p>
+
                 </div>
                 <!-- Divider-->
                 <hr class="my-4" />

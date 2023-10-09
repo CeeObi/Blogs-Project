@@ -106,8 +106,6 @@ def add_post():
 def edit_post(i_d):
     view_data = {}
     id=int(i_d)
-    print(id)
-    print(type(id))
     if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
@@ -135,6 +133,17 @@ def edit_post(i_d):
         view_data["post_img_url"] = data.post_img_url
     ttle = {"title":"Edit","url": view_data["post_img_url"]}
     return render_template("edit_post.html", contxt=view_data, title = ttle)
+
+
+@app.route("/delete/<i_d>")
+@login_required
+def delete_post(i_d):
+    id=int(i_d)
+    data = Post.query.get(id)
+    db.session.delete(data)
+    db.session.commit()
+    return redirect(url_for("home"))
+
 
 
 @login_manager.user_loader
