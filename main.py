@@ -30,6 +30,7 @@ resp = res
 def home():
     # data = resp
     data = Post.query.all()
+    data = data[:3] #Displays the first three data.
     return render_template("index.html", data=data)
 
 
@@ -73,7 +74,7 @@ def view_post(i_d):
 
 
 @app.route("/addpost", methods = ["POST","GET"])
-#@login_required
+@login_required
 def add_post():
     view_data = {}
     db.create_all()
@@ -100,30 +101,31 @@ def add_post():
     return render_template("add_post.html",contxt=view_data, title = ttle)
 
 
-@app.route("/editpost/<i_d>", methods = ["GET","PUT"])
-#@login_required
+@app.route("/editpost/<i_d>", methods = ["GET","POST"])
+@login_required
 def edit_post(i_d):
     view_data = {}
-    if request.method == "PUT":
+    id=int(i_d)
+    print(id)
+    print(type(id))
+    if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
         body = request.form["content"]
         post_by = request.form["author"]
-        post_owner_email=current_user.email
         post_img_url = request.form["url"]
         post_date = post_day() # request.form["post_date"]
-        data = Post.query.get(int(i_d))
+        data = Post.query.get(id)
         data.title=title
         data.subtitle = subtitle
         data.post_img_url=post_img_url
         data.body=body
         data.post_by=post_by
-        #db.session.update(data)#FIX EDIT
         db.session.commit()
         return redirect(url_for("home"))
     # Read Data from SQLlite DB
-    data = Post.query.get(int(i_d))
-    if data.id == int(i_d):
+    data = Post.query.get(id)
+    if data.id == id:
         view_data["id"] = data.id
         view_data["title"] = data.title
         view_data["subtitle"] = data.subtitle
