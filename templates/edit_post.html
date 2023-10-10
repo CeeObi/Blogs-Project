@@ -29,8 +29,9 @@
                     <input type="text" name="author" id="author" class="form-control" value="{{contxt.post_by}}">
                    <label for="url" class="form-check-label mt-3"><b>Blog Image URL</b></label>
                     <input type="text" name="url" id="url" class="form-control" value="{{contxt.post_img_url}}">
-                   <label for="content" class="form-check-label mt-3"><b>Blog Content</b></label>
-                    <textarea name="content" id="content" class="form-control" rows="8" >{{contxt.body}}</textarea>
+                   <label class="form-check-label mt-3"><b>Blog Content</b></label>
+                   {{ ckeditor.create(value=contxt.body) }}
+                   {{ckeditor.config(name="content", id="content", class="form-control", rows="8")}}
                     <input type="submit" name="submit" id="submit" class="btn btn-primary mt-2 rounded" value="submit">
                </div>
            </form>
@@ -38,6 +39,6 @@
 </div>
     {% include "footer.html" %}
 
-
+<script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
 </body>
 </html>

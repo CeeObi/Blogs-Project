@@ -1,9 +1,10 @@
+import re
 from smtplib import SMTP
 from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import LoginForm,db,User,SignupForm,login_manager,Post,csrf,post_day
+from models import LoginForm,db,User,SignupForm,login_manager,Post,csrf,post_day,ckeditor
 
 
 
@@ -13,8 +14,16 @@ URL = "https://api.npoint.io/eafe5d9a08398126aa2f"
 app = Flask(__name__)
 app.secret_key = "Any thing here"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['CKEDITOR_PKG_TYPE'] = "basic"
 db.init_app(app)
 csrf.init_app(app)
+ckeditor.init_app(app)
+
+
+
+
+
+
 
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -24,6 +33,9 @@ res = requests.get(URL).json()
 resp = res
 #print(resp)
 
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
@@ -57,6 +69,7 @@ def view_post(i_d):
         if current_user.is_authenticated:
             view_data["email"] = data.post_owner_email
             if current_user.email.lower() == view_data["email"].lower():
+            #if int(current_user.id) == 1:
                 validated_user = True
             else:
                 validated_user = False
@@ -73,16 +86,20 @@ def view_post(i_d):
     return render_template("post.html", contxt=view_data)
 
 
+
 @app.route("/addpost", methods = ["POST","GET"])
 @login_required
 def add_post():
     view_data = {}
-    db.create_all()
+    #db.create_all() at the app_context above
     ttle = {"title":"New", "url":"https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjR8fGNvbXBhbnl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"}
     if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
-        body = request.form["content"]
+        body = request.form.get('ckeditor') #request.form["content"] #request.form.get('ckeditor')
+        clean = re.compile('<.*?>')
+        body = re.sub(clean, '', body)
+        #print(body)
         post_by = request.form["author"]
         post_owner_email = current_user.email
         post_img_url = request.form["url"]
@@ -100,7 +117,6 @@ def add_post():
     view_data["post_img_url"] = ""
     return render_template("add_post.html",contxt=view_data, title = ttle)
 
-
 @app.route("/editpost/<i_d>", methods = ["GET","POST"])
 @login_required
 def edit_post(i_d):
@@ -109,10 +125,12 @@ def edit_post(i_d):
     if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
-        body = request.form["content"]
+        body = request.form.get("ckeditor")
+        clean = re.compile('<.*?>')
+        body = re.sub(clean, '', body)
         post_by = request.form["author"]
         post_img_url = request.form["url"]
-        post_date = post_day() # request.form["post_date"]
+        #post_date = post_day() # request.form["post_date"]
         data = Post.query.get(id)
         data.title=title
         data.subtitle = subtitle
@@ -149,7 +167,7 @@ def delete_post(i_d):
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use this in the query for the user
-    return User.query.get(int(user_id))
+    return User.query.get(int(user_id)) #User.query.get_or_404(int(user_id))
 
 
 @app.route('/login', methods=["GET","POST"])
@@ -185,7 +203,7 @@ def logout():
 #Add user to database would be:
 @app.route("/signup", methods=["POST","GET"])
 def signup():
-    db.create_all()
+    #db.create_all()
     form = SignupForm()
     if request.method == "POST" and form.validate():
         email = form.email.data
@@ -197,6 +215,10 @@ def signup():
             flash("User exist! Please choose a different user.")
             return redirect(url_for('signup'))
         new_user = User(email=email,password=generate_password_hash(password, method='sha256'),name=name)
+        # hash_and_salted_password = generate_password_hash(
+        #     request.form.get('password'),
+        #     method='pbkdf2:sha256',
+        #     salt_length=8 )   #This can be used to hae more secured password.
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('home'))
@@ -228,7 +250,6 @@ def contact():
         data = {"contact": "Successfully sent your message", "question": "Any question? I will answer it."}
         return render_template("contact.html", data=data)
     return render_template("contact.html",data=data)
-
 
 
 
