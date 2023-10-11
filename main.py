@@ -1,30 +1,34 @@
 import re
 from smtplib import SMTP
 from flask import Flask, render_template, request, redirect, url_for, flash
-import requests
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import LoginForm, db, User, SignupForm, login_manager, Post, csrf, post_day, ckeditor, Comment
+from models import res, LoginForm, db, User, SignupForm, login_manager, Post, csrf, post_day, ckeditor, Comment, gravatar
 
 
-URL = "https://api.npoint.io/eafe5d9a08398126aa2f"
-
+resp = res
+# print(resp)
 app = Flask(__name__)
 app.secret_key = "Any thing here"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['CKEDITOR_PKG_TYPE'] = "basic"
+app.config['GRAVATAR_SIZE'] = 100
+app.config['GRAVATAR_RATING']= 'g'
+app.config['GRAVATAR_DEFAULT'] = 'retro'
+app.config['GRAVATAR_FORCE_DEFAULT'] = False
+app.config['GRAVATAR_FORCE_LOWER'] = False
+app.config['GRAVATAR_USE_SSL'] = False
+app.config['GRAVATAR_BASE_URL'] = None
+login_manager.login_view = 'login'
 db.init_app(app)
 csrf.init_app(app)
-ckeditor.init_app(app)
-
-
-login_manager.login_view = 'login'
 login_manager.init_app(app)
+ckeditor.init_app(app)
+gravatar.init_app(app)
 
 
-res = requests.get(URL).json()
-resp = res
-#print(resp)
+
+
 
 
 with app.app_context():
@@ -49,19 +53,18 @@ def about():
 #@login_required
 def view_post(i_d):
     view_data = {}
-    # Read Data from SQLlite DB
+    #Add comment
     if request.method == "POST":
         post_reviewd = Post.query.get(int(i_d))
+        commenter = User.query.filter_by(email=current_user.email).first()
         comment_body = request.form.get('ckeditor')  # request.form["content"] #request.form.get('ckeditor')
         clean = re.compile('<.*?>')
         comment_body = re.sub(clean, '', comment_body)
-        print(comment_body)
-        print(current_user.name)
-        print(post_reviewd)
-        new_comment = Comment(text=comment_body,commenter=User.query.get(int(i_d)), post_reviewed=Post.query.get(int(i_d)))
+        new_comment = Comment(text=comment_body,commenter=commenter, post_reviewed=post_reviewd)
         db.session.add(new_comment)
         db.session.commit()
         return redirect(url_for("home"))
+    # Read Data from SQLlite DB
     data = Post.query.get(int(i_d))
     if data.id == int(i_d):
         view_data["id"] = data.id
@@ -71,9 +74,11 @@ def view_post(i_d):
         view_data["post_by"] = data.post_by
         view_data["post_date"] = data.post_date
         view_data["post_img_url"] = data.post_img_url
-        view_data["blog_post"] = data.blog_post
-        for each in data.blog_post:
-            print(each.text)
+        view_data["blog_comments"] = data.blog_post
+        #view_data["blog_commented"] = data.blog_post
+        # for each_blog_post in data.blog_post:
+        #     print(each_blog_post.text)
+        #     print(each_blog_post.commenter.email)
         if current_user.is_authenticated:
             view_data["email"] = data.post_owner.email
             if current_user.email.lower() == view_data["email"].lower():
@@ -134,6 +139,7 @@ def edit_post(i_d):
     if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
+        print(subtitle)
         body = request.form.get("ckeditor")
         clean = re.compile('<.*?>')
         body = re.sub(clean, '', body)

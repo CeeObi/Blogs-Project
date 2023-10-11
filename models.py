@@ -9,11 +9,18 @@ from flask_wtf import FlaskForm, CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_ckeditor import CKEditor
+from flask_gravatar import Gravatar
+import requests
+
+
+URL = "https://api.npoint.io/eafe5d9a08398126aa2f"
+res = requests.get(URL).json()
 
 login_manager = LoginManager()
 db = SQLAlchemy()
 csrf = CSRFProtect()
 ckeditor = CKEditor()
+gravatar = Gravatar()
 
 
 

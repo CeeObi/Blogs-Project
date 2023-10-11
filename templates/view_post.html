@@ -47,7 +47,17 @@
                         </form>
                         {% endif %}
                         {% endif %}
-                        <p>Comments Here</p>
+                        <hr/>
+                        <h6>Reviews</h6>
+                        {% for each_comment in contxt.blog_comments %}
+                        <div class="shadow p-3 mb-2 bg-white rounded" style="max-width: 18rem;">
+                              <div class="card-body text-dark">
+                                <img src="{{ 'each_comment.commenter.email' | gravatar }}" alt="">
+                                <p class="">{{each_comment.commenter.name}}</p>
+                                <p class="">{{each_comment.text}}</p>
+                              </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
