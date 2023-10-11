@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = "Any thing here"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['CKEDITOR_PKG_TYPE'] = "basic"
-app.config['GRAVATAR_SIZE'] = 100
+app.config['GRAVATAR_SIZE'] = 40
 app.config['GRAVATAR_RATING']= 'g'
 app.config['GRAVATAR_DEFAULT'] = 'retro'
 app.config['GRAVATAR_FORCE_DEFAULT'] = False
@@ -139,7 +139,6 @@ def edit_post(i_d):
     if request.method == "POST":
         title = request.form["title"]
         subtitle = request.form["subtitle"]
-        print(subtitle)
         body = request.form.get("ckeditor")
         clean = re.compile('<.*?>')
         body = re.sub(clean, '', body)

@@ -32,7 +32,7 @@
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('about')}}">About</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('contact')}}">Contact Us</a></li>
                      {% if current_user.is_authenticated %}
-                    <li class="nav-item"><a class="btn rounded btn-outline-light p-1 mt-3 mx-1" href="{{url_for('home')}}">Hi {{current_user.name.title()}}</a></li>
+                    <li class="nav-item fs-6  px-1 pt-2 mt-2 mx-2"><a class="subheading shadow rounded text-light" href="{{url_for('home')}}">Welcome, {{current_user.name.title()}}</a></li>
                     <li class="nav-item"><a class="btn rounded btn-light p-1 mt-3 " href="{{url_for('logout')}}">Logout</a></li>
                     {% else %}
                     <li class="nav-item"><a class="btn rounded btn-outline-light p-1 mt-3 mx-1" href="{{url_for('login')}}">Login</a></li>
