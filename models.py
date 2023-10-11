@@ -1,6 +1,8 @@
 #from wtforms.form import Form
 from flask_login import UserMixin
 from datetime import datetime
+
+from sqlalchemy.orm import backref, relationship
 from wtforms.fields import StringField,EmailField,SubmitField
 from wtforms.validators import DataRequired,length
 from flask_wtf import FlaskForm, CSRFProtect
@@ -25,28 +27,42 @@ class SignupForm(FlaskForm):
     email = EmailField('Email', [DataRequired(), length(max=30)])
     password = StringField('Password', [DataRequired(), length(max=30)])
     submit = SubmitField('Signup')
-#     For the login html
-# {% if form.csrf_token.errors %}
-#         <div class="warning">You have submitted an invalid CSRF token</div>
-#     {% endif %}
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    __tablename__ = "registered_users"
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+    comments = relationship('Comment', back_populates='commenter')
+    posts = relationship('Post', back_populates='post_owner')
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    commenter_id = db.Column(db.Integer, db.ForeignKey('registered_users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('blogpost.id'))
+    #fields
+    text = db.Column(db.Text, nullable=False)
+    commenter = relationship('User', back_populates='comments')
+    post_reviewed = relationship('Post', back_populates='blog_post')
 
 
 class Post(db.Model):
+    __tablename__ = "blogpost"
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
-    post_owner_email = db.Column(db.String(1000))
+    #poster_id = db.Column(db.Integer, db.ForeignKey('registered_users.id'))
+    poster_id = db.Column(db.Integer, db.ForeignKey('registered_users.id'))# db.Column(db.String(1000))
     title = db.Column(db.String(1000), unique=True)
     subtitle = db.Column(db.String(1000), unique=True)
     body = db.Column(db.String())
     post_by = db.Column(db.String(1000))
     post_date = db.Column(db.String(100))
     post_img_url = db.Column(db.String())
+    blog_post = relationship('Comment', back_populates='post_reviewed')
+    post_owner = relationship('User', back_populates='posts') #poster
 
 
 def post_day():

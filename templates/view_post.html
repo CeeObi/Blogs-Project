@@ -32,11 +32,22 @@
                             &middot; Images by
                             <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>
                         {% if current_user.is_authenticated %}
-                         {% if contxt.validated_user %}
+                         {% if contxt.post_author %}
                         <hr class="my-4" />
                         <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href={{url_for('edit_post',i_d=contxt.id)}}>Edit Post →</a></div>
+                        {% else %}
+                        <hr/>
+                        <form action="{{ url_for('view_post',i_d=contxt.id) }}" method="POST" class="pb-4">
+                            <div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <label  class="form-check-label"><b>Comment</b></label>
+                            {{ ckeditor.create() }}
+                              <input type="submit" name="submit" id="submit" class="btn btn-primary mt-2 rounded" value="submit">
+                            </div>
+                        </form>
                         {% endif %}
                         {% endif %}
+                        <p>Comments Here</p>
                     </div>
                 </div>
             </div>
@@ -48,5 +59,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
+    <script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
     </body>
 </html>

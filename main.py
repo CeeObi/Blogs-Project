@@ -4,9 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import LoginForm,db,User,SignupForm,login_manager,Post,csrf,post_day,ckeditor
-
-
+from models import LoginForm, db, User, SignupForm, login_manager, Post, csrf, post_day, ckeditor, Comment
 
 
 URL = "https://api.npoint.io/eafe5d9a08398126aa2f"
@@ -18,11 +16,6 @@ app.config['CKEDITOR_PKG_TYPE'] = "basic"
 db.init_app(app)
 csrf.init_app(app)
 ckeditor.init_app(app)
-
-
-
-
-
 
 
 login_manager.login_view = 'login'
@@ -52,12 +45,24 @@ def about():
     return render_template("about.html",data=data)
 
 
-@app.route('/post/<i_d>')
+@app.route('/post/<i_d>',methods=["POST","GET"])
 #@login_required
 def view_post(i_d):
     view_data = {}
+    # Read Data from SQLlite DB
+    if request.method == "POST":
+        post_reviewd = Post.query.get(int(i_d))
+        comment_body = request.form.get('ckeditor')  # request.form["content"] #request.form.get('ckeditor')
+        clean = re.compile('<.*?>')
+        comment_body = re.sub(clean, '', comment_body)
+        print(comment_body)
+        print(current_user.name)
+        print(post_reviewd)
+        new_comment = Comment(text=comment_body,commenter=User.query.get(int(i_d)), post_reviewed=Post.query.get(int(i_d)))
+        db.session.add(new_comment)
+        db.session.commit()
+        return redirect(url_for("home"))
     data = Post.query.get(int(i_d))
-    #Read Data from SQLlite DB
     if data.id == int(i_d):
         view_data["id"] = data.id
         view_data["title"] = data.title
@@ -66,14 +71,18 @@ def view_post(i_d):
         view_data["post_by"] = data.post_by
         view_data["post_date"] = data.post_date
         view_data["post_img_url"] = data.post_img_url
+        view_data["blog_post"] = data.blog_post
+        for each in data.blog_post:
+            print(each.text)
         if current_user.is_authenticated:
-            view_data["email"] = data.post_owner_email
+            view_data["email"] = data.post_owner.email
             if current_user.email.lower() == view_data["email"].lower():
             #if int(current_user.id) == 1:
-                validated_user = True
+                post_author = True
             else:
-                validated_user = False
-            view_data["validated_user"] = validated_user
+                post_author = False
+            view_data["post_author"] = post_author
+
     # Read Data from npoint API
     #data = resp
     # for each_post in data:
@@ -83,8 +92,7 @@ def view_post(i_d):
     #         view_data["body"] = each_post["body"]
     #         view_data["post_by"] = each_post["post_by"]
     #         view_data["post_date"] = each_post["post_date"]
-    return render_template("post.html", contxt=view_data)
-
+    return render_template("view_post.html", contxt=view_data)
 
 
 @app.route("/addpost", methods = ["POST","GET"])
@@ -101,10 +109,10 @@ def add_post():
         body = re.sub(clean, '', body)
         #print(body)
         post_by = request.form["author"]
-        post_owner_email = current_user.email
+        post_owner = User.query.filter_by(email=current_user.email).first()
         post_img_url = request.form["url"]
         post_date = post_day() # request.form["post_date"]
-        new_post = Post(title=title, subtitle=subtitle, body=body, post_by=post_by, post_date=post_date, post_img_url=post_img_url, post_owner_email=post_owner_email)
+        new_post = Post(title=title, subtitle=subtitle, body=body, post_by=post_by, post_date=post_date, post_img_url=post_img_url, post_owner=post_owner)
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("home"))
@@ -116,6 +124,7 @@ def add_post():
     view_data["post_date"] = ""
     view_data["post_img_url"] = ""
     return render_template("add_post.html",contxt=view_data, title = ttle)
+
 
 @app.route("/editpost/<i_d>", methods = ["GET","POST"])
 @login_required
@@ -131,7 +140,8 @@ def edit_post(i_d):
         post_by = request.form["author"]
         post_img_url = request.form["url"]
         #post_date = post_day() # request.form["post_date"]
-        data = Post.query.get(id)
+        # Query
+        data = Post.query.get(id)  # Query Db using id
         data.title=title
         data.subtitle = subtitle
         data.post_img_url=post_img_url
@@ -163,7 +173,6 @@ def delete_post(i_d):
     return redirect(url_for("home"))
 
 
-
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use this in the query for the user
@@ -183,7 +192,10 @@ def login():
             remember = False
         #check and authenticate
         user = User.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password, password):
+        if not user:
+            flash("User does not exist. Please Signup")
+            return redirect(url_for('signup'))
+        elif not check_password_hash(user.password, password):
             flash("Please check your login details and try again.")
             return redirect(url_for('login'))
         login_user(user, remember=remember)
@@ -221,6 +233,8 @@ def signup():
         #     salt_length=8 )   #This can be used to hae more secured password.
         db.session.add(new_user)
         db.session.commit()
+        user = User.query.filter_by(email=email).first()
+        login_user(user)
         return redirect(url_for('home'))
     if current_user.is_authenticated:
         return redirect(url_for("home"))
@@ -250,8 +264,6 @@ def contact():
         data = {"contact": "Successfully sent your message", "question": "Any question? I will answer it."}
         return render_template("contact.html", data=data)
     return render_template("contact.html",data=data)
-
-
 
 
 
