@@ -1,4 +1,5 @@
 import re
+import os
 from smtplib import SMTP
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import login_user, login_required, current_user, logout_user
@@ -8,12 +9,12 @@ from models import res, LoginForm, db, User, SignupForm, login_manager, Post, cs
 
 resp = res
 # print(resp)
-app = Flask(__name__)
-app.secret_key = "Any thing here"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app = Flask("Dim'sBlog")
+app.secret_key = os.environ.get('FLASK_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI") #, "sqlite:///db.sqlite")
 app.config['CKEDITOR_PKG_TYPE'] = "basic"
 app.config['GRAVATAR_SIZE'] = 40
-app.config['GRAVATAR_RATING']= 'g'
+app.config['GRAVATAR_RATING'] = 'g'
 app.config['GRAVATAR_DEFAULT'] = 'retro'
 app.config['GRAVATAR_FORCE_DEFAULT'] = False
 app.config['GRAVATAR_FORCE_LOWER'] = False
@@ -254,14 +255,14 @@ def contact():
         phone = request.form["Phone"]
         msg = request.form["Message"]
         email_msg = f"Name: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {msg}"
-        my_email = "dimis378@gmail.com"
-        my_pass = "axzxxcnfzskdtsha"
+        my_email = os.environ.get("FROM_EMAIL")
+        my_pass = os.environ.get("MY_PASS")
         with SMTP("smtp.gmail.com", 587) as connection:
             connection.starttls()
             connection.login(user=my_email, password=my_pass)
             connection.sendmail(
                 from_addr=my_email,
-                to_addrs='gudydymys@yahoo.ca',
+                to_addrs=os.environ.get("SENDTO_EMAIL"),
                 msg=f"Subject:One Webform Completed\n\n{email_msg}"
             )
         #print(email_msg)
@@ -273,4 +274,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
