@@ -38,8 +38,12 @@ with app.app_context():
 @app.route('/')
 def home():
     # data = resp
-    data = Post.query.all()
-    data = data[:3] #Displays the first three data.
+    data = Post.query.order_by(Post.id.desc()).limit(3).all() #Displays the first three data.
+    return render_template("index.html", data=data)
+
+@app.route('/olderpost')
+def older_post():
+    data = Post.query.order_by(Post.id.desc()).all()
     return render_template("index.html", data=data)
 
 
@@ -87,7 +91,6 @@ def view_post(i_d):
             else:
                 post_author = False
             view_data["post_author"] = post_author
-
     # Read Data from npoint API
     #data = resp
     # for each_post in data:

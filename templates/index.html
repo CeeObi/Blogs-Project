@@ -35,7 +35,7 @@
                         <a href="#!">{{each_post.post_by}}</a>
                         on {{each_post.post_date}}.
                         {% if current_user.is_authenticated %}
-                        {% if current_user.email == each_post.post_owner_email %}
+                        {% if current_user.email == each_post.post_owner.email %}
                         <a href="{{url_for('delete_post',i_d=each_post.id)}}"><i class="fa-solid fa-circle-xmark mx-2"></i></a>
                         {% endif %}
                         {% endif %}
@@ -45,13 +45,13 @@
                 <!-- Divider-->
                 <hr class="my-4" />
                 {% endfor %}
-
                 <!-- Pager-->
-                {% if current_user.is_authenticated %}
-                <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href={{url_for('add_post')}}>Create New Post →</a></div>
-                {% else %}
-                <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
-                {% endif %}
+                <div class="d-flex justify-content-between mb-4">
+                    <div><a class="btn btn-primary text-uppercase" href={{url_for('older_post')}}>Older Posts →</a></div>
+                    {% if current_user.is_authenticated %}
+                    <div><a class="btn btn-primary text-uppercase" href={{url_for('add_post')}}>Create New Post →</a></div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
