@@ -21,7 +21,7 @@
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="{{url_for('home')}}">DIMIX3</a>
+            <a class="navbar-brand border px-2 border-5 fs-6 fst-italic" href="{{url_for('home')}}">DmsBlg</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
                 <i class="fas fa-bars"></i>
@@ -35,8 +35,8 @@
                     <li class="nav-item fs-6  px-1 pt-2 mt-2 mx-2"><a class="subheading shadow rounded text-light" href="{{url_for('home')}}">Welcome, {{current_user.name.title()}}</a></li>
                     <li class="nav-item"><a class="btn rounded btn-light p-1 mt-3 " href="{{url_for('logout')}}">Logout</a></li>
                     {% else %}
-                    <li class="nav-item"><a class="btn rounded btn-outline-light p-1 mt-3 mx-1" href="{{url_for('login')}}">Login</a></li>
-                    <li class="nav-item"><a class="btn rounded btn-light p-1 mt-3 " href="{{url_for('signup')}}">Signup</a></li>
+                    <li class="nav-item"><a class="btn rounded btn-outline-primary p-1 mt-3 me-2" href="{{url_for('login')}}">Login</a></li>
+                    <li class="nav-item"><a class="btn rounded btn-primary p-1 mt-3 " href="{{url_for('signup')}}">Signup</a></li>
                     {% endif %}
 
                 </ul>
