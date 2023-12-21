@@ -10,8 +10,8 @@ from models import res, LoginForm, db, User, SignupForm, login_manager, Post, cs
 resp = res
 # print(resp)
 app = Flask("Dim'sBlog")
-app.secret_key = os.environ.get('FLASK_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI") #, "sqlite:///db.sqlite")
+app.secret_key = "SW345TGVFGHJIUJMNBGH"#os.environ.get('FLASK_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"#os.environ.get("DB_URI") #, "sqlite:///db.sqlite")
 app.config['CKEDITOR_PKG_TYPE'] = "basic"
 app.config['GRAVATAR_SIZE'] = 40
 app.config['GRAVATAR_RATING'] = 'g'
@@ -274,4 +274,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

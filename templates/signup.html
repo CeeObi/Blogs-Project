@@ -2,23 +2,24 @@
 <html lang="en">
 <body>
 {% include 'header.html' %}
-<header class="masthead" style="background-image: url({{url_for('static', filename='assets/img/home2-bg.jpg')}})">
-        <div class="row form-control justify-content-center card text-left mx-auto w-25 my-1 rounded">
+<header class="masthead" style="background-image: url({{url_for('static', filename='assets/img/home2-bg.jpg')}})" class="container">
+  <div class="col-8 col-sm-6 col-md-5 col-lg-4 col-xl-3 mx-auto ">
+        <div class="row form-control justify-content-center card text-left mx-auto my-1 rounded">
            <form action="signup" method="POST" class="pb-4">
                   {{ form.csrf_token }}
                 <img class="my-4 " src="{{url_for('static', filename='assets/favicon.ico')}}" alt="" width="72" height="57">
                 <h1 class=" h3 fw-normal  ">Sign up</h1>
                <div>
                   <div>{{ form.name.label(class="form-check-label mt-3") }}:</div>
-                  <div>{{ form.name(class_="form-control", placeholder="Name") }}</div>
+                  <div>{{ form.name(class_="form-control rounded", placeholder="Name") }}</div>
                 </div>
                 <div>
                   <div>{{ form.email.label(class="form-check-label mt-3") }}:</div>
-                  <div>{{ form.email(class_="form-control", placeholder="Email") }}</div>
+                  <div>{{ form.email(class_="form-control rounded", placeholder="Email") }}</div>
                 </div>
                 <div>
                     <div>{{ form.password.label(class="form-check-label mt-3") }}:</div>
-                    <div> {{ form.password(class_="form-control  ", placeholder="Password")}}</div>
+                    <div> {{ form.password(class_="form-control rounded mb-2  ", placeholder="Password")}}</div>
                 </div>
 
                {% with message = get_flashed_messages()[0] %}
@@ -29,6 +30,7 @@
                <div> {{ form.submit(class_="form-control mb-4 btn rounded btn-outline-dark btn-sm p-2 mt-3")}}</div>
            </form>
         </div>
+  </div>
     {% include "footer.html" %}
 </header>
 
