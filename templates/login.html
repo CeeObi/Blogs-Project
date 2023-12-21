@@ -7,7 +7,9 @@
         <div class="row form-control justify-content-center card text-left mx-auto my-1 rounded">
            <form action="login" method="POST" class="pb-4">
                   {{ form.csrf_token }}
-                <img class="my-4 " src="{{url_for('static', filename='assets/favicon.ico')}}" alt="" width="72" height="57">
+                <!-- <img class="my-4 " src="{{url_for('static', filename='assets/favicon.ico')}}" alt="" width="72" height="57"> -->
+                <div class="my-4">
+                <a class="navbar-brand border px-2 border-5 fs-6 fst-italic my-4 border-dark fw-bolder" href="">DmsBlg</a></div>
                 <h1 class=" h3 fw-normal  ">Please sign in</h1>
                 <div>
                   <div>{{ form.email.label(class="form-check-label mt-3") }}:</div>
