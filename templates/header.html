@@ -35,11 +35,13 @@
                      {% if current_user.is_authenticated %}
                     <div  class="d-flex align-items-center justify-content-center">
                         <div><li class="nav-item fs-6 fw-bolder mx-2"><a class="subheading rounded text-info" href="{{url_for('home')}}">Welcome, {{current_user.name.title()}}</a></li></div>
-                        <div><li class="nav-item"><a class="btn rounded btn-info fw-bolder shadow py-1 px-3" href="{{url_for('logout')}}">Logout</a></li></div>
+                        <div><li class="nav-item"><a class="btn rounded btn-info fw-bolder py-1 px-3" href="{{url_for('logout')}}">Logout</a></li></div>
                     </div>
                     {% else %}
-                    <div><li class="nav-item"><a class="btn rounded btn-outline-primary py-1 px-3 mt-3 me-2" href="{{url_for('login')}}">Login</a></li></div>
-                    <li class="nav-item"><a class="btn rounded btn-info py-1 px-3 mt-3 " href="{{url_for('signup')}}">Signup</a></li>
+                    <div  class="d-flex align-items-center justify-content-center">
+                        <div><li class="nav-item"><a class="btn rounded btn-outline-info py-1 px-3 me-2" href="{{url_for('login')}}">Login</a></li></div>
+                        <div><li class="nav-item"><a class="btn rounded btn-info py-1 px-3 " href="{{url_for('signup')}}">Signup</a></li></div>
+                    </div>
                     {% endif %}
                 </ul>
             </div>
