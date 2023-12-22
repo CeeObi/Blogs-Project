@@ -14,8 +14,9 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
-
 </head>
+
+
 
 <body>
     <!-- Navigation-->
@@ -26,19 +27,20 @@
                 Menu
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
+            <div class="collapse navbar-collapse align-items-center" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto py-4 py-lg-0">
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('home')}}">Home</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('about')}}">About</a></li>
                     <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('contact')}}">Contact Us</a></li>
                      {% if current_user.is_authenticated %}
-                    <li class="nav-item fs-6  px-1 pt-2 mt-2 mx-2"><a class="subheading shadow rounded text-light" href="{{url_for('home')}}">Welcome, {{current_user.name.title()}}</a></li>
-                    <li class="nav-item"><a class="btn rounded btn-light p-1 mt-3 " href="{{url_for('logout')}}">Logout</a></li>
+                    <div  class="d-flex align-items-center justify-content-center">
+                        <div><li class="nav-item fs-6 fw-bolder mx-2"><a class="subheading rounded text-info" href="{{url_for('home')}}">Welcome, {{current_user.name.title()}}</a></li></div>
+                        <div><li class="nav-item"><a class="btn rounded btn-info fw-bolder shadow py-1 px-3" href="{{url_for('logout')}}">Logout</a></li></div>
+                    </div>
                     {% else %}
-                    <li class="nav-item"><a class="btn rounded btn-outline-primary p-1 mt-3 me-2" href="{{url_for('login')}}">Login</a></li>
-                    <li class="nav-item"><a class="btn rounded btn-primary p-1 mt-3 " href="{{url_for('signup')}}">Signup</a></li>
+                    <div><li class="nav-item"><a class="btn rounded btn-outline-primary py-1 px-3 mt-3 me-2" href="{{url_for('login')}}">Login</a></li></div>
+                    <li class="nav-item"><a class="btn rounded btn-info py-1 px-3 mt-3 " href="{{url_for('signup')}}">Signup</a></li>
                     {% endif %}
-
                 </ul>
             </div>
         </div>
